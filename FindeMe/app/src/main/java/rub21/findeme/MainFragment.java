@@ -71,10 +71,28 @@ public class MainFragment extends Fragment implements LocationListener {
         }
         //IO
         mSocket.emit("add_user", str_user);
-        mSocket.on("confirm", onResult);
-        mSocket.connect();
+        //mSocket.connect();
         return view;
     }
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
+
+//        mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
+//        mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
+//        mSocket.on("new message", onNewMessage);
+//        mSocket.on("user joined", onUserJoined);
+//        mSocket.on("user left", onUserLeft);
+//        mSocket.on("typing", onTyping);
+//        mSocket.on("stop typing", onStopTyping);
+        mSocket.on("confirm", onResult);
+        mSocket.connect();
+
+    }
+
+
 
     /* Request updates at startup */
     @Override
