@@ -9,14 +9,28 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#232323">
+    android:background="#232323"
+    android:weightSum="1">
 
     <com.mapbox.mapboxsdk.views.MapView
         android:id="@+id/mapview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="413dp"
         mapbox:mapid="ruben.n9e0l5jk"
         mapbox:accessToken="pk.eyJ1IjoicnViZW4iLCJhIjoiYlBrdkpRWSJ9.JgDDxJkvDn3us36aGzR6vg"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:layout_weight="0.20" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/txtoutput" />
+    </LinearLayout>
 
 </LinearLayout>

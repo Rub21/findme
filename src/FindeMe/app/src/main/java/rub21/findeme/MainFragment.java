@@ -1,5 +1,6 @@
 package rub21.findeme;
 
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
@@ -10,14 +11,22 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.google.gson.Gson;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.overlay.Icon;
+import com.mapbox.mapboxsdk.overlay.Marker;
 import com.mapbox.mapboxsdk.overlay.UserLocationOverlay;
 import com.mapbox.mapboxsdk.views.MapView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 
@@ -35,6 +44,8 @@ public class MainFragment extends Fragment implements LocationListener {
     private String provider;
     User user = new User();
     Gson gson = new Gson();
+    //Output
+    private TextView txtoutput;
 
     private Socket mSocket;
     {
@@ -48,6 +59,9 @@ public class MainFragment extends Fragment implements LocationListener {
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frame_main, container, false);
+        //SALIDAS
+        //txtoutput= (TextView) container.findViewById(R.id.txtoutput);
+
         //MAP
         mv = (MapView) view.findViewById(R.id.mapview);
         mv.setMinZoomLevel(mv.getTileProvider().getMinimumZoomLevel());
@@ -70,8 +84,11 @@ public class MainFragment extends Fragment implements LocationListener {
             onLocationChanged(location);
         }
         //IO
-        mSocket.emit("add_user", str_user);
-        //mSocket.connect();
+        mSocket.emit("new_user", str_user);
+        mSocket.on("confirm", onResult);
+        mSocket.connect();
+        //txtoutput.setText("dd");
+
         return view;
     }
     @Override
@@ -87,8 +104,6 @@ public class MainFragment extends Fragment implements LocationListener {
 //        mSocket.on("user left", onUserLeft);
 //        mSocket.on("typing", onTyping);
 //        mSocket.on("stop typing", onStopTyping);
-        mSocket.on("confirm", onResult);
-        mSocket.connect();
 
     }
 
@@ -110,14 +125,14 @@ public class MainFragment extends Fragment implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-//        user.getCoordinates().setLat(location.getLatitude());
-//        user.getCoordinates().setLng(location.getLongitude());
-//        Toast.makeText(getActivity().getApplicationContext(), user.getCoordinates().getLat().toString(), Toast.LENGTH_SHORT).show();
-//        Toast.makeText(getActivity().getApplicationContext(), user.getCoordinates().getLat().toString(), Toast.LENGTH_SHORT).show();
-//        if (user.getCoordinates().isStatus()) {
-//            String json = gson.toJson(user);
-//            mSocket.emit("location", json);
-//        }
+        user.getCoordinates().setLat(location.getLatitude());
+        user.getCoordinates().setLng(location.getLongitude());
+        Toast.makeText(getActivity().getApplicationContext(), user.getCoordinates().getLat().toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity().getApplicationContext(), user.getCoordinates().getLat().toString(), Toast.LENGTH_SHORT).show();
+        if (user.getCoordinates().isStatus()) {
+            String json = gson.toJson(user);
+            mSocket.emit("location", json);
+        }
     }
 
     @Override
@@ -135,16 +150,27 @@ public class MainFragment extends Fragment implements LocationListener {
     }
 
     //IO
-    Emitter.Listener onResult = new Emitter.Listener() {
+    private Emitter.Listener onResult = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(getActivity().getApplicationContext(),args[0].toString(),Toast.LENGTH_LONG).show();
+                    JSONObject data = (JSONObject) args[0];
+                    String user;
+                    try {
+                        user = data.getString("b1887c22a5d7bd47");
+                        Marker m = new Marker(mv, "Edinburgh", "Scotland", new LatLng(55.94629, -3.20777));
+                        m.setIcon(new Icon(getActivity().getApplicationContext(), Icon.Size.SMALL, "marker-stroked", "ee8a65"));
+                        mv.addMarker(m);
+                    } catch (JSONException e) {
+                        return;
+                    }
+
                 }
             });
         }
     };
+
 
 }
