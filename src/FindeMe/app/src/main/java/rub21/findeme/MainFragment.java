@@ -168,11 +168,11 @@ public class MainFragment extends Fragment implements LocationListener {
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
 
-                    
+
                     String user;
                     try {
                         user = data.getString("b1887c22a5d7bd47");
-                        Marker m = new Marker(mv, "Edinburgh", "Scotland", new LatLng(55.94629, -3.20777));
+                        Marker m = new Marker(mv, "Tokyo", "Japan", new LatLng(35.70247, 139.71588));
                         m.setIcon(new Icon(getActivity().getApplicationContext(), Icon.Size.SMALL, "marker-stroked", "ee8a65"));
                         mv.addMarker(m);
                     } catch (JSONException e) {
