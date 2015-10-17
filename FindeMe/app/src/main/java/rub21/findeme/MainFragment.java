@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.google.gson.Gson;
@@ -47,7 +48,6 @@ public class MainFragment extends Fragment implements LocationListener {
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frame_main, container, false);
-
         //MAP
         mv = (MapView) view.findViewById(R.id.mapview);
         mv.setMinZoomLevel(mv.getTileProvider().getMinimumZoomLevel());
@@ -55,15 +55,12 @@ public class MainFragment extends Fragment implements LocationListener {
         mv.setCenter(mv.getTileProvider().getCenterCoordinate());
         mv.setZoom(0);
 
+        //USER
+        String str_user = getActivity().getIntent().getExtras().getString("user");
+        user = gson.fromJson(str_user,User.class);
 
-        String strtext = getActivity().getIntent().getExtras().getString("user");
-
-        Toast.makeText(getActivity().getApplicationContext(),strtext,Toast.LENGTH_LONG).show();
-
-//        currentMap = getString(R.string.streetMapId);
-        // Show user location
+        // LOCATION
         mv.setUserLocationEnabled(true);
-
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         provider = locationManager.getBestProvider(criteria, false);
@@ -72,23 +69,10 @@ public class MainFragment extends Fragment implements LocationListener {
             System.out.println("Provider " + provider + " has been selected.");
             onLocationChanged(location);
         }
-
-
-
-//        mSocket.emit("location", "test");
-//        Emitter.Listener onResult = new Emitter.Listener() {
-//            @Override
-//            public void call(final Object... args) {
-//                getActivity().runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Toast.makeText(getActivity().getApplicationContext(),args[0].toString(),Toast.LENGTH_LONG).show();
-//                    }
-//                });
-//            }
-//        };
-//        mSocket.on("message", onResult);
-//        mSocket.connect();
+        //IO
+        mSocket.emit("add_user", str_user);
+        mSocket.on("confirm", onResult);
+        mSocket.connect();
         return view;
     }
 
@@ -131,4 +115,18 @@ public class MainFragment extends Fragment implements LocationListener {
     public void onProviderDisabled(String provider) {
         Toast.makeText(getActivity(), "Disabled provider " + provider, LENGTH_SHORT).show();
     }
+
+    //IO
+    Emitter.Listener onResult = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getActivity().getApplicationContext(),args[0].toString(),Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+    };
+
 }
