@@ -55,8 +55,10 @@ public class MainFragment extends Fragment implements LocationListener {
         mv.setCenter(mv.getTileProvider().getCenterCoordinate());
         mv.setZoom(0);
 
-        String strtext = getArguments().getString("user");
 
+        String strtext = getActivity().getIntent().getExtras().getString("user");
+
+        Toast.makeText(getActivity().getApplicationContext(),strtext,Toast.LENGTH_LONG).show();
 
 //        currentMap = getString(R.string.streetMapId);
         // Show user location
