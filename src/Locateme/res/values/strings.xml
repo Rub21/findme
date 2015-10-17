@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">LocateMe</string>
-       <string name="username_text">Insert your user name</string>
-    <string name="signin_text">Find me</string>
-</resources>
