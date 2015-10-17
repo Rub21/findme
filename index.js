@@ -31,6 +31,7 @@ io.on('connection', function(socket) {
 		console.log(user);
 		socket.username = user.user;
 		users[user.idphone] = user;
+		socket.emit('friends', users);
 	});
 
 });

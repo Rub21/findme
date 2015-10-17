@@ -59,8 +59,6 @@ public class MainFragment extends Fragment implements LocationListener {
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frame_main, container, false);
-        //SALIDAS
-        //txtoutput= (TextView) container.findViewById(R.id.txtoutput);
 
         //MAP
         mv = (MapView) view.findViewById(R.id.mapview);
@@ -68,6 +66,7 @@ public class MainFragment extends Fragment implements LocationListener {
         mv.setMaxZoomLevel(mv.getTileProvider().getMaximumZoomLevel());
         mv.setCenter(mv.getTileProvider().getCenterCoordinate());
         mv.setZoom(0);
+        mv.setUserLocationEnabled(true);
 
         //USER
         String str_user = getActivity().getIntent().getExtras().getString("user");
@@ -86,6 +85,7 @@ public class MainFragment extends Fragment implements LocationListener {
         //IO
         mSocket.emit("new_user", str_user);
         mSocket.on("confirm", onResult);
+        mSocket.on("friends", onResult);
         mSocket.connect();
         //txtoutput.setText("dd");
 
@@ -94,22 +94,9 @@ public class MainFragment extends Fragment implements LocationListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setHasOptionsMenu(true);
-
-//        mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
-//        mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
-//        mSocket.on("new message", onNewMessage);
-//        mSocket.on("user joined", onUserJoined);
-//        mSocket.on("user left", onUserLeft);
-//        mSocket.on("typing", onTyping);
-//        mSocket.on("stop typing", onStopTyping);
-
     }
 
-
-
-    /* Request updates at startup */
     @Override
     public void onResume() {
         super.onResume();
@@ -172,5 +159,29 @@ public class MainFragment extends Fragment implements LocationListener {
         }
     };
 
+
+    private Emitter.Listener friends = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+
+                    
+                    String user;
+                    try {
+                        user = data.getString("b1887c22a5d7bd47");
+                        Marker m = new Marker(mv, "Edinburgh", "Scotland", new LatLng(55.94629, -3.20777));
+                        m.setIcon(new Icon(getActivity().getApplicationContext(), Icon.Size.SMALL, "marker-stroked", "ee8a65"));
+                        mv.addMarker(m);
+                    } catch (JSONException e) {
+                        return;
+                    }
+
+                }
+            });
+        }
+    };
 
 }
