@@ -25,7 +25,7 @@ io.on('connection', function(socket) {
 		var user = JSON.parse(user.toString());
 		console.log(user);
 		socket.username = user.user;
-		socket.emit('friends', user);
+		socket.broadcast.emit('friends', user);
 	});
 
 });
