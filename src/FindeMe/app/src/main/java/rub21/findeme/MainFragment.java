@@ -27,6 +27,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
+import java.util.LinkedList;
+import java.util.List;
 
 import rub21.findeme.bean.User;
 import rub21.findeme.server.Config;
@@ -42,6 +44,7 @@ public class MainFragment extends Fragment implements LocationListener {
     private String provider;
     User user = new User();
     Gson gson = new Gson();
+    private List<Marker> list_marker= new LinkedList<Marker>();
     //Output
     private TextView txtoutput;
 
@@ -147,6 +150,8 @@ public class MainFragment extends Fragment implements LocationListener {
                         Marker m = new Marker(mv, "Edinburgh", "Scotland", new LatLng(55.94629, -3.20777));
                         m.setIcon(new Icon(getActivity().getApplicationContext(), Icon.Size.SMALL, "marker-stroked", "ee8a65"));
                         mv.addMarker(m);
+
+
                     } catch (JSONException e) {
                         return;
                     }
@@ -163,9 +168,10 @@ public class MainFragment extends Fragment implements LocationListener {
                 @Override
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
+                        list_marker.clear();
                         User  us =gson.fromJson(data.toString(), User.class);
-
-                        Marker m = new Marker(mv, us.getUser(), us.getIdphone(), new LatLng(us.getLat(), us.getLng()));
+                       Marker m = new Marker(mv, us.getUser(), us.getIdphone(), new LatLng(us.getLat(), us.getLng()));
+                        list_marker.add(m);
                         m.setIcon(new Icon(getActivity().getApplicationContext(), Icon.Size.SMALL, "marker-stroked", "ee8a65"));
                         mv.addMarker(m);
                 }
