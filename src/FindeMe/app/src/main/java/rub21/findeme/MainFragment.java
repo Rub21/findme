@@ -154,8 +154,8 @@ public class MainFragment extends Fragment implements LocationListener {
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
                     User us = gson.fromJson(data.toString(),User.class);
-                    mv.setCenter(new LatLng(us.getLat(), us.getLng()));
-                    mv.setZoom(15);
+                    //mv.setCenter(new LatLng(us.getLat(), us.getLng()));
+                   // mv.setZoom(15);
                     Toast.makeText(getActivity().getApplicationContext(), "Start Looking friends...", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -175,14 +175,17 @@ public class MainFragment extends Fragment implements LocationListener {
                     markerList.clear();
                     userList.clear();
                     for (int i=0;i<jsonArray.length();i++){
+
                         try {
                             JSONObject jsonObject = (JSONObject)jsonArray.get(i);
                             User us = gson.fromJson(jsonObject.toString(),User.class);
-                            Marker m = new Marker(mv, us.getUser(), us.getIdphone(), new LatLng(us.getLat(), us.getLng()));
-                            m.setIcon(new Icon(getActivity().getApplicationContext(), Icon.Size.SMALL, "marker-stroked", "ee8a65"));
-                            markerList.add(m);
-                            userList.add(us);
-                            mv.addMarkers(markerList);
+                            if(!us.getIdphone().equals(user.getIdphone())){
+                                Marker m = new Marker(mv, us.getUser(), us.getIdphone(), new LatLng(us.getLat(), us.getLng()));
+                                m.setIcon(new Icon(getActivity().getApplicationContext(), Icon.Size.SMALL, "marker-stroked", "ee8a65"));
+                                markerList.add(m);
+                                userList.add(us);
+                                mv.addMarkers(markerList);
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

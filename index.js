@@ -28,15 +28,16 @@ io.on('connection', function(socket) {
 			user.lng = -74.2176728120173;
 		}
 		//socket.username = user.user;
+		obj_users[user.idphone] = user;
 		users = [];
 		_.each(obj_users, function(val, key) {
 			users.push(val)
 		});
 		//console.log(users);
-		obj_users[user.idphone] = user;
-		console.log(user)
 		socket.emit('confirm', user);
-		socket.broadcast.emit('friends', users);
+		console.log("=========enviar")
+		console.log(users);
+		socket.emit('friends', users);
 	});
 
 	socket.on('location', function(user) {
@@ -46,7 +47,8 @@ io.on('connection', function(socket) {
 		obj_users[user.idphone] = user;
 		//socket.username = user.user;
 		_.each(obj_users, function(val, key) {
-			users.push(val)
+			users.push(val);
+
 		});
 		console.log(users);
 		socket.broadcast.emit('friends', users);
