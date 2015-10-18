@@ -149,6 +149,9 @@ public class MainFragment extends Fragment implements LocationListener {
                 @Override
                 public void run() {
                    JSONArray jsonArray = (JSONArray) args[0];
+                    if(markerList.size()>0){
+                        mv.removeMarkers(markerList);
+                    }
                     markerList.clear();
                     userList.clear();
                     for (int i=0;i<jsonArray.length();i++){
@@ -177,6 +180,9 @@ public class MainFragment extends Fragment implements LocationListener {
                 @Override
                 public void run() {
                     JSONArray jsonArray = (JSONArray) args[0];
+                    if(markerList.size()>0){
+                        mv.removeMarkers(markerList);
+                    }
                     markerList.clear();
                     userList.clear();
                     for (int i=0;i<jsonArray.length();i++){
@@ -192,7 +198,6 @@ public class MainFragment extends Fragment implements LocationListener {
                             e.printStackTrace();
                         }
                     }
-
                 }
             });
         }
