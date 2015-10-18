@@ -92,7 +92,6 @@ public class MainFragment extends Fragment implements LocationListener {
         mSocket.on("confirm", onResult);
         mSocket.on("friends", friends);
 
-        mSocket.on("recive_location", recive_location);
         mSocket.connect();
         //txtoutput.setText("dd");
 
@@ -150,6 +149,8 @@ public class MainFragment extends Fragment implements LocationListener {
                 @Override
                 public void run() {
                    JSONArray jsonArray = (JSONArray) args[0];
+                    markerList.clear();
+                    userList.clear();
                     for (int i=0;i<jsonArray.length();i++){
                         try {
                             JSONObject jsonObject = (JSONObject)jsonArray.get(i);
@@ -175,37 +176,23 @@ public class MainFragment extends Fragment implements LocationListener {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    JSONObject data = (JSONObject) args[0];
-//                    markerList.clear();
-//                    userList.getList().clear();
-//                    userList =  gson.fromJson(data.toString(), UserList.class);
-//                    for (User us : userList.getList()) {
-//                        Marker m = new Marker(mv, us.getUser(), us.getIdphone(), new LatLng(us.getLat(), us.getLng()));
-//                        m.setIcon(new Icon(getActivity().getApplicationContext(), Icon.Size.SMALL, "marker-stroked", "ee8a65"));
-//                        markerList.add(m);
-//                    }
-//                    mv.addMarkers(markerList);
-                }
-            });
-        }
-    };
+                    JSONArray jsonArray = (JSONArray) args[0];
+                    markerList.clear();
+                    userList.clear();
+                    for (int i=0;i<jsonArray.length();i++){
+                        try {
+                            JSONObject jsonObject = (JSONObject)jsonArray.get(i);
+                            User us = gson.fromJson(jsonObject.toString(),User.class);
+                            Marker m = new Marker(mv, us.getUser(), us.getIdphone(), new LatLng(us.getLat(), us.getLng()));
+                            m.setIcon(new Icon(getActivity().getApplicationContext(), Icon.Size.SMALL, "marker-stroked", "ee8a65"));
+                            markerList.add(m);
+                            userList.add(us);
+                            mv.addMarkers(markerList);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
-    private Emitter.Listener recive_location = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    //JSONObject data = (JSONObject) args[0];
-//                    markerList.clear();
-//                    userList.getList().clear();
-//                    userList =  gson.fromJson(data.toString(), UserList.class);
-//                    for (User us : userList.getList()) {
-//                        Marker m = new Marker(mv, us.getUser(), us.getIdphone(), new LatLng(us.getLat(), us.getLng()));
-//                        m.setIcon(new Icon(getActivity().getApplicationContext(), Icon.Size.SMALL, "marker-stroked", "ee8a65"));
-//                        markerList.add(m);
-//                    }
-//                    mv.addMarkers(markerList);
                 }
             });
         }
