@@ -18,9 +18,16 @@ io.on('connection', function(socket) {
 	console.log(socket.id);
 	socket.on('new_user', function(user) {
 		var user = JSON.parse(user.toString());
-		console.log(user);
+		var users = [];
 		obj_users[user.idphone] = user;
-		socket.emit('confirm', user);
+		//socket.username = user.user;
+		_.each(obj_users, function(val, key) {
+			user.push(val)
+		});
+
+		console.log("=======");
+		console.log(users);
+		socket.emit('confirm', users);
 	});
 
 	socket.on('location', function(user) {
@@ -31,6 +38,8 @@ io.on('connection', function(socket) {
 		_.each(obj_users, function(val, key) {
 			user.push(val)
 		});
+
+		console.log("=============================")
 		console.log(users);
 		socket.broadcast.emit('friends', users);
 	});
