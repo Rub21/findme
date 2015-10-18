@@ -19,12 +19,13 @@ io.on('connection', function(socket) {
 	socket.on('new_user', function(user) {
 		var user = JSON.parse(user.toString());
 		var users = [];
-		obj_users[user.idphone] = user;
 		//socket.username = user.user;
 		_.each(obj_users, function(val, key) {
 			users.push(val)
 		});
 
+		obj_users[user.idphone] = user;
+		
 		console.log("=======");
 		console.log(users);
 		socket.emit('confirm', users);
