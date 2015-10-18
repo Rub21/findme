@@ -98,6 +98,9 @@ public class MainFragment extends Fragment implements LocationListener {
         mSocket.on("friends", friends);
         mSocket.connect();
         //txtoutput.setText("dd");
+        //
+        txtoutput = (TextView) view.findViewById(R.id.txtoutput);
+        txtoutput.setText(user.getUser());
 
         return view;
     }

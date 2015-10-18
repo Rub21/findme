@@ -19,7 +19,6 @@ var users = [];
 io.on('connection', function(socket) {
 	console.log(socket.id);
 	socket.on('new_user', function(user) {
-		console.log("=============================New User==================")
 		var user = JSON.parse(user.toString());
 		console.log("New User : " + user.user);
 		//test
@@ -41,14 +40,12 @@ io.on('connection', function(socket) {
 	});
 
 	socket.on('location', function(user) {
-		console.log("=============================location==================")
 		var user = JSON.parse(user.toString());
 		users = [];
 		obj_users[user.idphone] = user;
 		//socket.username = user.user;
 		_.each(obj_users, function(val, key) {
 			users.push(val);
-
 		});
 		console.log(users);
 		socket.broadcast.emit('friends', users);
