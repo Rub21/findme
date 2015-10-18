@@ -22,16 +22,21 @@ io.on('connection', function(socket) {
 		console.log("=============================New User==================")
 		var user = JSON.parse(user.toString());
 		console.log("New User : " + user.user);
-
+		//test
+		if (user.idphone == "b1887c22a5d7bd47") {
+			user.lat = -13.151537596771284;
+			user.lng = -74.2176728120173;
+		}
 		//socket.username = user.user;
 		users = [];
 		_.each(obj_users, function(val, key) {
 			users.push(val)
 		});
-		console.log(users)
+		//console.log(users);
 		obj_users[user.idphone] = user;
-		socket.emit('confirm', users);
-		//socket.broadcast.emit('friends', users);
+		console.log(user)
+		socket.emit('confirm', user);
+		socket.broadcast.emit('friends', users);
 	});
 
 	socket.on('location', function(user) {
@@ -42,7 +47,7 @@ io.on('connection', function(socket) {
 		//socket.username = user.user;
 		_.each(obj_users, function(val, key) {
 			users.push(val)
-		});	
+		});
 		console.log(users);
 		socket.broadcast.emit('friends', users);
 	});

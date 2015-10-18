@@ -52,6 +52,8 @@ public class MainFragment extends Fragment implements LocationListener {
     //Output
     private TextView txtoutput;
 
+    boolean islogin = false;
+
     private Socket mSocket;
     {
         try {
@@ -72,6 +74,7 @@ public class MainFragment extends Fragment implements LocationListener {
         mv.setCenter(mv.getTileProvider().getCenterCoordinate());
         mv.setZoom(0);
         mv.setUserLocationEnabled(true);
+//        mv.setUserLocationRequiredZoom(15);
 
         //USER
         String str_user = getActivity().getIntent().getExtras().getString("user");
@@ -85,13 +88,14 @@ public class MainFragment extends Fragment implements LocationListener {
         if (location != null) {
             System.out.println("Provider " + provider + " has been selected.");
             user.setLoc_status(true);
+            user.setLat(location.getLatitude());
+            user.setLng(location.getLongitude());
             onLocationChanged(location);
         }
         //IO
-        mSocket.emit("new_user", str_user);
+        mSocket.emit("new_user", gson.toJson(user));
         mSocket.on("confirm", onResult);
         mSocket.on("friends", friends);
-
         mSocket.connect();
         //txtoutput.setText("dd");
 
@@ -120,11 +124,11 @@ public class MainFragment extends Fragment implements LocationListener {
     public void onLocationChanged(Location location) {
         user.setLat(location.getLatitude());
         user.setLng(location.getLongitude());
-        Toast.makeText(getActivity().getApplicationContext(), user.getLat().toString(), Toast.LENGTH_SHORT).show();
         if (user.isLoc_status()) {
             String json = gson.toJson(user);
             mSocket.emit("location", json);
         }
+
     }
 
     @Override
@@ -148,25 +152,10 @@ public class MainFragment extends Fragment implements LocationListener {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                   JSONArray jsonArray = (JSONArray) args[0];
-                    if(markerList.size()>0){
-                        mv.removeMarkers(markerList);
-                    }
-                    markerList.clear();
-                    userList.clear();
-                    for (int i=0;i<jsonArray.length();i++){
-                        try {
-                            JSONObject jsonObject = (JSONObject)jsonArray.get(i);
-                            User us = gson.fromJson(jsonObject.toString(),User.class);
-                            Marker m = new Marker(mv, us.getUser(), us.getIdphone(), new LatLng(us.getLat(), us.getLng()));
-                            m.setIcon(new Icon(getActivity().getApplicationContext(), Icon.Size.SMALL, "marker-stroked", "ee8a65"));
-                            markerList.add(m);
-                            userList.add(us);
-                            mv.addMarkers(markerList);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    JSONObject data = (JSONObject) args[0];
+                    User us = gson.fromJson(data.toString(),User.class);
+                    mv.setCenter(new LatLng(us.getLat(), us.getLng()));
+                    mv.setZoom(15);
                     Toast.makeText(getActivity().getApplicationContext(), "Start Looking friends...", Toast.LENGTH_SHORT).show();
                 }
             });
