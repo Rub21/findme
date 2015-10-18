@@ -23,6 +23,7 @@ import com.mapbox.mapboxsdk.overlay.Marker;
 import com.mapbox.mapboxsdk.overlay.UserLocationOverlay;
 import com.mapbox.mapboxsdk.views.MapView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,6 +31,7 @@ import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.List;
 
+import rub21.findeme.bean.UserList;
 import rub21.findeme.bean.User;
 import rub21.findeme.server.Config;
 
@@ -44,7 +46,9 @@ public class MainFragment extends Fragment implements LocationListener {
     private String provider;
     User user = new User();
     Gson gson = new Gson();
-    private List<Marker> list_marker= new LinkedList<Marker>();
+    private List<Marker> markerList=new LinkedList<Marker>();
+   // private UserList userList =new UserList();
+    private List<User> userList =new LinkedList<User>();
     //Output
     private TextView txtoutput;
 
@@ -87,6 +91,8 @@ public class MainFragment extends Fragment implements LocationListener {
         mSocket.emit("new_user", str_user);
         mSocket.on("confirm", onResult);
         mSocket.on("friends", friends);
+
+        mSocket.on("recive_location", recive_location);
         mSocket.connect();
         //txtoutput.setText("dd");
 
@@ -143,19 +149,21 @@ public class MainFragment extends Fragment implements LocationListener {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    JSONObject data = (JSONObject) args[0];
-                    String user;
-                    try {
-                        user = data.getString("b1887c22a5d7bd47");
-                        Marker m = new Marker(mv, "Edinburgh", "Scotland", new LatLng(55.94629, -3.20777));
-                        m.setIcon(new Icon(getActivity().getApplicationContext(), Icon.Size.SMALL, "marker-stroked", "ee8a65"));
-                        mv.addMarker(m);
-
-
-                    } catch (JSONException e) {
-                        return;
+                   JSONArray jsonArray = (JSONArray) args[0];
+                    for (int i=0;i<jsonArray.length();i++){
+                        try {
+                            JSONObject jsonObject = (JSONObject)jsonArray.get(i);
+                            User us = gson.fromJson(jsonObject.toString(),User.class);
+                            Marker m = new Marker(mv, us.getUser(), us.getIdphone(), new LatLng(us.getLat(), us.getLng()));
+                            m.setIcon(new Icon(getActivity().getApplicationContext(), Icon.Size.SMALL, "marker-stroked", "ee8a65"));
+                            markerList.add(m);
+                            userList.add(us);
+                            mv.addMarkers(markerList);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
-
+                    Toast.makeText(getActivity().getApplicationContext(), "Start Looking friends...", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -168,12 +176,36 @@ public class MainFragment extends Fragment implements LocationListener {
                 @Override
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
-                        list_marker.clear();
-                        User  us =gson.fromJson(data.toString(), User.class);
-                       Marker m = new Marker(mv, us.getUser(), us.getIdphone(), new LatLng(us.getLat(), us.getLng()));
-                        list_marker.add(m);
-                        m.setIcon(new Icon(getActivity().getApplicationContext(), Icon.Size.SMALL, "marker-stroked", "ee8a65"));
-                        mv.addMarker(m);
+//                    markerList.clear();
+//                    userList.getList().clear();
+//                    userList =  gson.fromJson(data.toString(), UserList.class);
+//                    for (User us : userList.getList()) {
+//                        Marker m = new Marker(mv, us.getUser(), us.getIdphone(), new LatLng(us.getLat(), us.getLng()));
+//                        m.setIcon(new Icon(getActivity().getApplicationContext(), Icon.Size.SMALL, "marker-stroked", "ee8a65"));
+//                        markerList.add(m);
+//                    }
+//                    mv.addMarkers(markerList);
+                }
+            });
+        }
+    };
+
+    private Emitter.Listener recive_location = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //JSONObject data = (JSONObject) args[0];
+//                    markerList.clear();
+//                    userList.getList().clear();
+//                    userList =  gson.fromJson(data.toString(), UserList.class);
+//                    for (User us : userList.getList()) {
+//                        Marker m = new Marker(mv, us.getUser(), us.getIdphone(), new LatLng(us.getLat(), us.getLng()));
+//                        m.setIcon(new Icon(getActivity().getApplicationContext(), Icon.Size.SMALL, "marker-stroked", "ee8a65"));
+//                        markerList.add(m);
+//                    }
+//                    mv.addMarkers(markerList);
                 }
             });
         }

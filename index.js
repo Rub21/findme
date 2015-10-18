@@ -13,19 +13,37 @@ server.listen(port, function() {
 app.use(express.static(__dirname + '/public'));
 
 var obj_users = {};
+var users = [{
+	chanel: '#universidad',
+	idphone: '4f3e0190bdasdas2a',
+	lat: -13.151443545313736,
+	lng: -74.21738856462694,
+	user: 'r1',
+	status: true,
+	loc_status: true
+}, {
+	chanel: '#universidad',
+	idphone: '4f3e0190b660152a',
+	lat: -10.151443545313736,
+	lng: -50.21738856462694,
+	user: 'r2',
+	status: true,
+	loc_status: true
+}];
+
 
 io.on('connection', function(socket) {
 	console.log(socket.id);
 	socket.on('new_user', function(user) {
+
 		var user = JSON.parse(user.toString());
-		var users = [];
+		console.log("New User : " +user.user);
 		//socket.username = user.user;
-		_.each(obj_users, function(val, key) {
-			users.push(val)
-		});
+		// _.each(obj_users, function(val, key) {
+		// 	users.push(val)
+		// });
 
 		obj_users[user.idphone] = user;
-		
 		console.log("=======");
 		console.log(users);
 		socket.emit('confirm', users);
@@ -44,5 +62,14 @@ io.on('connection', function(socket) {
 		console.log(users);
 		socket.broadcast.emit('friends', users);
 	});
+
+
+	socket.on('loca', function(user) {
+		var user = JSON.parse(user.toString());
+
+	socket.broadcast.emit('recive_location', users);
+	});
+
+
 
 });
