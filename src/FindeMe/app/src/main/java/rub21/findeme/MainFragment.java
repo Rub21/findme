@@ -165,8 +165,8 @@ public class MainFragment extends Fragment implements LocationListener {
                     JSONObject data = (JSONObject) args[0];
 
                         User  us =gson.fromJson(data.toString(), User.class);
-                    Toast.makeText(getActivity(), data.toString() + provider, Toast.LENGTH_LONG).show();
-                        Marker m = new Marker(mv, us.getUser(), "Kenya", new LatLng(-1.26676, 36.83372));
+                    //Toast.makeText(getActivity(), data.toString(), Toast.LENGTH_LONG).show();
+                        Marker m = new Marker(mv, us.getUser(), us.getIdphone(), new LatLng(us.getLat(), us.getLng()));
                         m.setIcon(new Icon(getActivity().getApplicationContext(), Icon.Size.SMALL, "marker-stroked", "ee8a65"));
                         mv.addMarker(m);
                 }
