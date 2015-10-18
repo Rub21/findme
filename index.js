@@ -16,22 +16,16 @@ var users = {};
 io.on('connection', function(socket) {
 	console.log(socket.id);
 	socket.on('new_user', function(user) {
-		console.log(user.idphone)
 		var user = JSON.parse(user.toString());
 		console.log(user);
-		console.log(user.idphone);
-		socket.username = user.user;
-		users[user.idphone] = user;
-
-		socket.emit('confirm', users);
+		socket.emit('confirm', user);
 	});
 
 	socket.on('location', function(user) {
 		var user = JSON.parse(user.toString());
 		console.log(user);
 		socket.username = user.user;
-		users[user.idphone] = user;
-		socket.emit('friends', users);
+		socket.emit('friends', user);
 	});
 
 });

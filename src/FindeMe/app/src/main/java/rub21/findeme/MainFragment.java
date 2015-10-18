@@ -30,6 +30,7 @@ import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 
+import rub21.findeme.bean.Coordinates;
 import rub21.findeme.bean.User;
 import rub21.findeme.server.Config;
 
@@ -85,7 +86,7 @@ public class MainFragment extends Fragment implements LocationListener {
         //IO
         mSocket.emit("new_user", str_user);
         mSocket.on("confirm", onResult);
-        mSocket.on("friends", onResult);
+        mSocket.on("friends", friends);
         mSocket.connect();
         //txtoutput.setText("dd");
 
@@ -159,7 +160,6 @@ public class MainFragment extends Fragment implements LocationListener {
         }
     };
 
-
     private Emitter.Listener friends = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
@@ -167,18 +167,11 @@ public class MainFragment extends Fragment implements LocationListener {
                 @Override
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
-
-
-                    String user;
-                    try {
-                        user = data.getString("b1887c22a5d7bd47");
-                        Marker m = new Marker(mv, "Tokyo", "Japan", new LatLng(35.70247, 139.71588));
+                        User u=new User();
+                        u=gson.fromJson(data.toString(), User.class);
+                        Marker m = new Marker(mv, u.getUser(), u.getIdphone(), new LatLng(u.getCoordinates().getLng(), u.getCoordinates().getLng()));
                         m.setIcon(new Icon(getActivity().getApplicationContext(), Icon.Size.SMALL, "marker-stroked", "ee8a65"));
                         mv.addMarker(m);
-                    } catch (JSONException e) {
-                        return;
-                    }
-
                 }
             });
         }
