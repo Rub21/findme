@@ -9,11 +9,12 @@ import java.util.List;
 public class User {
 
     private String user;
-    private String email;
     private String idphone;
     private String chanel;
     private boolean status;
-    private Coordinates coordinates = new Coordinates();
+    private Double lat;
+    private Double lng;
+    private boolean loc_status;
 
 
     public String getUser() {
@@ -22,14 +23,6 @@ public class User {
 
     public void setUser(String user) {
         this.user = user;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getIdphone() {
@@ -47,6 +40,7 @@ public class User {
     public void setChanel(String chanel) {
         this.chanel = chanel;
     }
+
     public boolean isStatus() {
         return status;
     }
@@ -55,24 +49,27 @@ public class User {
         this.status = status;
     }
 
-    public Coordinates getCoordinates() {
-        return coordinates;
+    public Double getLat() {
+        return lat;
     }
 
-    public void setCoordinates(Coordinates coordinates) {
-        this.coordinates = coordinates;
+    public void setLat(Double lat) {
+        this.lat = lat;
     }
 
-    public  String print(){
-        String text = getUser() +"\n"+
-                getEmail()+"\n"+
-                getChanel()+"\n"+
-                getIdphone()+"\n"+
-                getCoordinates().getLng()+"\n"+
-                getCoordinates().getLat()+"\n"+
-                getCoordinates().isStatus()+"\n"+
-                isStatus();
-        System.out.print(text);
-        return text;
+    public Double getLng() {
+        return lng;
+    }
+
+    public void setLng(Double lng) {
+        this.lng = lng;
+    }
+
+    public boolean isLoc_status() {
+        return loc_status;
+    }
+
+    public void setLoc_status(boolean loc_status) {
+        this.loc_status = loc_status;
     }
 }

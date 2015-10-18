@@ -1,6 +1,5 @@
 package rub21.findeme;
 
-import android.accounts.AccountManager;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
@@ -11,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +28,6 @@ import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 
-import rub21.findeme.bean.Coordinates;
 import rub21.findeme.bean.User;
 import rub21.findeme.server.Config;
 
@@ -74,13 +71,13 @@ public class MainFragment extends Fragment implements LocationListener {
         user = gson.fromJson(str_user,User.class);
 
         // LOCATION
-        mv.setUserLocationEnabled(true);
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         provider = locationManager.getBestProvider(criteria, false);
         Location location = locationManager.getLastKnownLocation(provider);
         if (location != null) {
             System.out.println("Provider " + provider + " has been selected.");
+            user.setLoc_status(true);
             onLocationChanged(location);
         }
         //IO
@@ -113,11 +110,10 @@ public class MainFragment extends Fragment implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        user.getCoordinates().setLat(location.getLatitude());
-        user.getCoordinates().setLng(location.getLongitude());
-        Toast.makeText(getActivity().getApplicationContext(), user.getCoordinates().getLat().toString(), Toast.LENGTH_SHORT).show();
-        Toast.makeText(getActivity().getApplicationContext(), user.getCoordinates().getLat().toString(), Toast.LENGTH_SHORT).show();
-        if (user.getCoordinates().isStatus()) {
+        user.setLat(location.getLatitude());
+        user.setLng(location.getLongitude());
+        Toast.makeText(getActivity().getApplicationContext(), user.getLat().toString(), Toast.LENGTH_SHORT).show();
+        if (user.isLoc_status()) {
             String json = gson.toJson(user);
             mSocket.emit("location", json);
         }
@@ -167,9 +163,10 @@ public class MainFragment extends Fragment implements LocationListener {
                 @Override
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
-                        User u=new User();
-                        u=gson.fromJson(data.toString(), User.class);
-                        Marker m = new Marker(mv, u.getUser(), u.getIdphone(), new LatLng(u.getCoordinates().getLng(), u.getCoordinates().getLng()));
+
+                        User  us =gson.fromJson(data.toString(), User.class);
+                    Toast.makeText(getActivity(), data.toString() + provider, Toast.LENGTH_LONG).show();
+                        Marker m = new Marker(mv, us.getUser(), "Kenya", new LatLng(-1.26676, 36.83372));
                         m.setIcon(new Icon(getActivity().getApplicationContext(), Icon.Size.SMALL, "marker-stroked", "ee8a65"));
                         mv.addMarker(m);
                 }

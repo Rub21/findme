@@ -63,7 +63,7 @@ public class LoginActivity extends Activity {
                 user.setIdphone(Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID));
                 user.setStatus(chkMuestrame.isChecked());
                 if (!user.getUser().isEmpty()) {
-                    user.getCoordinates().setStatus(true);
+                    user.setStatus(true);
                     String json = gson.toJson(user);
                     //Toast.makeText(getApplicationContext(),json, LENGTH_LONG).show();
                     Intent intent = new Intent(getApplicationContext(),MainActivity.class);
