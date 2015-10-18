@@ -22,7 +22,7 @@ io.on('connection', function(socket) {
 		obj_users[user.idphone] = user;
 		//socket.username = user.user;
 		_.each(obj_users, function(val, key) {
-			user.push(val)
+			users.push(val)
 		});
 
 		console.log("=======");
@@ -36,7 +36,7 @@ io.on('connection', function(socket) {
 		obj_users[user.idphone] = user;
 		//socket.username = user.user;
 		_.each(obj_users, function(val, key) {
-			user.push(val)
+			users.push(val)
 		});
 
 		console.log("=============================")
