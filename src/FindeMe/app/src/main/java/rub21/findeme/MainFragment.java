@@ -95,7 +95,7 @@ public class MainFragment extends Fragment implements LocationListener {
         mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
         mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
         mSocket.emit("new_user", gson.toJson(user));
-        mSocket.on("confirm", onResult);
+        mSocket.on("confirm", confirm);
         mSocket.on("friends", friends);
         mSocket.connect();
         //TEXT
@@ -162,7 +162,7 @@ public class MainFragment extends Fragment implements LocationListener {
     //END GPS
 
     //IO
-    private Emitter.Listener onResult = new Emitter.Listener() {
+    private Emitter.Listener confirm = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
             getActivity().runOnUiThread(new Runnable() {
@@ -191,7 +191,7 @@ public class MainFragment extends Fragment implements LocationListener {
                     markerList.clear();
                     userList.clear();
                     for (int i=0;i<jsonArray.length();i++){
-
+                        if(i==0){Toast.makeText(getActivity().getApplicationContext(), "New friends ", Toast.LENGTH_SHORT).show();}
                         try {
                             JSONObject jsonObject = (JSONObject)jsonArray.get(i);
                             User us = gson.fromJson(jsonObject.toString(),User.class);

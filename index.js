@@ -32,12 +32,14 @@ io.on('connection', function(socket) {
 			obj_users[user.idphone] = user;
 			users = [];
 			_.each(obj_users, function(val, key) {
-				users.push(val)
+				if (key !== user.idphone) {
+					users.push(val);
+				}
 			});
-			//console.log(users);
 			socket.emit('confirm', user);
-			console.log("=========enviar")
+			console.log("=========login from :" + user.user)
 			console.log(users);
+			console.log("=========")
 			socket.emit('friends', users);
 		}
 
@@ -47,19 +49,33 @@ io.on('connection', function(socket) {
 		var user = JSON.parse(user.toString());
 		users = [];
 		obj_users[user.idphone] = user;
-		//socket.username = user.user;
+
 		_.each(obj_users, function(val, key) {
 			if (val.lat !== undefined && val.lng !== undefined) {
 				users.push(val);
 			}
 		});
+		console.log("=========location from :" + user.user)
 		console.log(users);
+		console.log("=========")
 		socket.broadcast.emit('friends', users);
 	});
 
 	socket.on('disconnect', function() {
 		console.log("Remove :" + socket.idphone);
 		delete obj_users[socket.idphone];
+
+		users = [];
+
+		_.each(obj_users, function(val, key) {
+			if (val.lat !== undefined && val.lng !== undefined) {
+				users.push(val);
+			}
+		});
+
+		console.log("=========disconnect from :" + socket.idphone)
+		console.log(users);
+		console.log("=========")
 		socket.emit('friends', users);
 	});
 });
