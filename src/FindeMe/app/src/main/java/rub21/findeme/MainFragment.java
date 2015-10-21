@@ -31,7 +31,6 @@ import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.List;
 
-import rub21.findeme.bean.UserList;
 import rub21.findeme.bean.User;
 import rub21.findeme.server.Config;
 
@@ -93,17 +92,27 @@ public class MainFragment extends Fragment implements LocationListener {
             onLocationChanged(location);
         }
         //IO
+        mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
+        mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
         mSocket.emit("new_user", gson.toJson(user));
         mSocket.on("confirm", onResult);
         mSocket.on("friends", friends);
         mSocket.connect();
-        //txtoutput.setText("dd");
-        //
+        //TEXT
         txtoutput = (TextView) view.findViewById(R.id.txtoutput);
         txtoutput.setText(user.getUser());
 
         return view;
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mSocket.disconnect();
+        mSocket.off(Socket.EVENT_CONNECT_ERROR, onConnectError);
+        mSocket.off(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,6 +132,8 @@ public class MainFragment extends Fragment implements LocationListener {
         locationManager.removeUpdates((LocationListener) this);
     }
 
+
+    //GPS
     @Override
     public void onLocationChanged(Location location) {
         user.setLat(location.getLatitude());
@@ -147,6 +158,8 @@ public class MainFragment extends Fragment implements LocationListener {
     public void onProviderDisabled(String provider) {
         Toast.makeText(getActivity(), "Disabled provider " + provider, LENGTH_SHORT).show();
     }
+
+    //END GPS
 
     //IO
     private Emitter.Listener onResult = new Emitter.Listener() {
@@ -197,5 +210,20 @@ public class MainFragment extends Fragment implements LocationListener {
             });
         }
     };
+
+
+    private Emitter.Listener onConnectError = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getActivity().getApplicationContext(), "Connection off", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+    };
+
+
 
 }

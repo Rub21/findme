@@ -21,22 +21,26 @@ io.on('connection', function(socket) {
 	socket.on('new_user', function(user) {
 		var user = JSON.parse(user.toString());
 		console.log("New User : " + user.user);
+		socket.idphone = user.idphone;
 		//test
 		if (user.idphone == "b1887c22a5d7bd47") {
 			user.lat = -13.151537596771284;
 			user.lng = -74.2176728120173;
 		}
-		//socket.username = user.user;
-		obj_users[user.idphone] = user;
-		users = [];
-		_.each(obj_users, function(val, key) {
-			users.push(val)
-		});
-		//console.log(users);
-		socket.emit('confirm', user);
-		console.log("=========enviar")
-		console.log(users);
-		socket.emit('friends', users);
+
+		if (user.lat !== undefined && user.lng !== undefined) {
+			obj_users[user.idphone] = user;
+			users = [];
+			_.each(obj_users, function(val, key) {
+				users.push(val)
+			});
+			//console.log(users);
+			socket.emit('confirm', user);
+			console.log("=========enviar")
+			console.log(users);
+			socket.emit('friends', users);
+		}
+
 	});
 
 	socket.on('location', function(user) {
@@ -45,9 +49,17 @@ io.on('connection', function(socket) {
 		obj_users[user.idphone] = user;
 		//socket.username = user.user;
 		_.each(obj_users, function(val, key) {
-			users.push(val);
+			if (val.lat !== undefined && val.lng !== undefined) {
+				users.push(val);
+			}
 		});
 		console.log(users);
 		socket.broadcast.emit('friends', users);
+	});
+
+	socket.on('disconnect', function() {
+		console.log("Remove :" + socket.idphone);
+		delete obj_users[socket.idphone];
+		socket.emit('friends', users);
 	});
 });
