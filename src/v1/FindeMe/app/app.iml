@@ -104,7 +104,7 @@
     <orderEntry type="library" exported="" name="recyclerview-v7-23.0.1" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-23.0.1" level="project" />
     <orderEntry type="library" exported="" name="socket.io-client-0.5.0" level="project" />
-    <orderEntry type="library" exported="" name="lost-1.0.1" level="project" />
     <orderEntry type="library" exported="" name="okio-1.4.0" level="project" />
+    <orderEntry type="library" exported="" name="lost-1.0.1" level="project" />
   </component>
 </module>
