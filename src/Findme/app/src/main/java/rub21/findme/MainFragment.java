@@ -32,8 +32,10 @@ public class MainFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frame_main, container, false);
-
+        String strtext = getActivity().getIntent().getExtras().getString("user");
+        Toast.makeText(getActivity().getApplicationContext(),strtext,Toast.LENGTH_LONG).show();
         mSocket.connect();
+
         return view;
     }
 
