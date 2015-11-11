@@ -18,30 +18,24 @@ var users = [];
 
 io.on('connection', function(socket) {
 	console.log(socket.id);
+
+
 	socket.on('new_user', function(user) {
 		var user = JSON.parse(user.toString());
-		console.log("New User : " + user.user);
+		console.log("New User : " + user);
 		socket.idphone = user.idphone;
+
 		//test
 		if (user.idphone == "b1887c22a5d7bd47") {
 			user.lat = -13.151537596771284;
 			user.lng = -74.2176728120173;
 		}
 
-		if (user.lat !== undefined && user.lng !== undefined) {
-			obj_users[user.idphone] = user;
-			users = [];
-			_.each(obj_users, function(val, key) {
-				if (key !== user.idphone) {
-					users.push(val);
-				}
-			});
-			socket.emit('confirm', user);
-			console.log("=========login from :" + user.user)
-			console.log(users);
-			console.log("=========")
-			socket.emit('friends', users);
-		}
+		socket.emit('confirm', user);
+		console.log("=========login from :" + user.user)
+		console.log(users);
+		console.log("=========")
+		socket.emit('friends', users);
 
 	});
 

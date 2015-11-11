@@ -12,14 +12,20 @@ import android.widget.Toast;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
+import com.google.gson.Gson;
+
+import org.json.JSONObject;
 
 import java.net.URISyntaxException;
+
+import rub21.findme.bean.User;
 
 /**
  * Created by ruben on 10/25/15.
  */
 public class MainFragment extends Fragment{
-
+    User user = new User();
+    Gson gson = new Gson();
     private Socket mSocket;
     {
         try {
@@ -34,7 +40,10 @@ public class MainFragment extends Fragment{
         View view = inflater.inflate(R.layout.frame_main, container, false);
         String strtext = getActivity().getIntent().getExtras().getString("user");
         Toast.makeText(getActivity().getApplicationContext(),strtext,Toast.LENGTH_LONG).show();
+
         mSocket.connect();
+        mSocket.emit("new_user", strtext);
+        mSocket.on("confirm",confirm);
 
         return view;
     }
@@ -63,4 +72,20 @@ public class MainFragment extends Fragment{
         super.onPause();
 
     }
+
+    private Emitter.Listener confirm = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    User us = gson.fromJson(data.toString(), User.class);
+                    //mv.setCenter(new LatLng(us.getLat(), us.getLng()));
+                    // mv.setZoom(15);
+                    Toast.makeText(getActivity().getApplicationContext(), us.getUser(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    };
 }

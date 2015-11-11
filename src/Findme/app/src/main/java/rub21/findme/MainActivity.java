@@ -2,6 +2,7 @@ package rub21.findme;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -39,8 +40,8 @@ public class MainActivity extends FragmentActivity {
         mapView.onCreate(savedInstanceState);
 
        // mSocket.connect();
-        //mSocket.on("new_user", new_user);
-        //mSocket.emit("location","ttest");
+
+
    }
 
     @Override
@@ -80,18 +81,5 @@ public class MainActivity extends FragmentActivity {
     }
 
 
-    private Emitter.Listener new_user = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            JSONObject data = (JSONObject) args[0];
 
-            int numUsers;
-            try {
-                numUsers = data.getInt("numUsers");
-            } catch (JSONException e) {
-                return;
-            }
-
-        }
-    };
 }
